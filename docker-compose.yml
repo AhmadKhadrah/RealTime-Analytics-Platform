@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  # 1. وسيط الرسائل - RabbitMQ
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: analytics_rabbitmq
+    ports:
+      - "5672:5672"   # المنفذ الرئيسي لإرسال واستقبال الرسائل (AMQP)
+      - "15672:15672" # منفذ واجهة الإدارة عبر المتصفح (Dashboard)
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - analytics_network
+
+  # 2. التخزين المؤقت السريع - Redis
+  redis:
+    image: redis:alpine
+    container_name: analytics_redis
+    ports:
+      - "6379:6379"   # المنفذ الافتراضي للاتصال بـ Redis
+    volumes:
+      - redis_data:/data
+    networks:
+      - analytics_network
+
+  # 3. قاعدة البيانات الدائمة - SQL Server
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: analytics_sqlserver
+    ports:
+      - "1433:1433"   # المنفذ الافتراضي للاتصال بـ SQL Server
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "YourStrong@Password123" # قم بتغيير كلمة المرور هنا إن أردت
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    networks:
+      - analytics_network
+
+volumes:
+  rabbitmq_data:
+  redis_data:
+  sqlserver_data:
+
+networks:
+  analytics_network:
+    driver: bridge

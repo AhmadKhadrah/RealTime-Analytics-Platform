@@ -1,0 +1,16 @@
+# .NET Build outputs
+**/bin/
+**/obj/
+.vs/
+*.user
+
+# Frontend Node Modules & Build
+**/node_modules/
+**/analytics-dashboard/dist/
+**/analytics-dashboard/build/
+.vscode/
+
+# Logs & OS Files
+*.log
+.DS_Store
+Thumbs.db
